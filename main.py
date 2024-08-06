@@ -85,8 +85,8 @@ class AutoRecorder:
         self.audio.terminate()
 
 def main():
-    recorder = AutoRecorder()
     while True:
+        recorder = AutoRecorder()
         try:
             recorder.detect_voice()
         finally:
