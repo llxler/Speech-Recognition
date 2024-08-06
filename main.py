@@ -3,7 +3,8 @@ import wave
 import numpy as np
 import time
 from aip import AipSpeech
-import threading
+
+import speechprocessing
 
 # 百度APPID AK SK
 APP_ID = '103707598'
@@ -18,7 +19,7 @@ CHANNELS = 1
 RATE = 16000
 CHUNK = 1024
 WAVE_OUTPUT_FILENAME = 'D:/UseForRuanjianbei/Speech-Recognition/audio.wav'
-SILENCE_THRESHOLD = 10000  # 静音阈值
+SILENCE_THRESHOLD = 20000  # 静音阈值
 SILENCE_DURATION = 1.5  # 静音持续时间秒数
 
 class AutoRecorder:
@@ -30,8 +31,7 @@ class AutoRecorder:
 
     def detect_voice(self):
         self.stream = self.audio.open(format=FORMAT, channels=CHANNELS,
-                                      rate=RATE, input=True,
-                                      frames_per_buffer=CHUNK)
+                                rate=RATE, input=True, frames_per_buffer=CHUNK)
         silence_count = 0
         self.recording = False
 
@@ -75,7 +75,11 @@ class AutoRecorder:
             audio_data = f.read()
         result = client.asr(audio_data, 'wav', 16000, {'dev_pid': 1537})
         if result['err_no'] == 0:
-            print("识别结果: " + result['result'][0])
+            str = result['result'][0]
+            # 调用字符处理函数处理字符串
+            print("识别结果: " + str)
+            output = speechprocessing.process_string(str)
+            print(f"识别码 {output}")
         else:
             print(f"语音识别失败，错误码：{result['err_no']}, 错误信息：{result['err_msg']}")
 
@@ -91,7 +95,6 @@ def main():
             recorder.detect_voice()
         finally:
             recorder.terminate()
-        # 停止5s
         time.sleep(5)
 
 if __name__ == '__main__':
