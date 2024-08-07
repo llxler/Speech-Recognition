@@ -29,22 +29,30 @@ def process_string(input_string):
     :param input_string: 需要处理的字符串
     :return: 对应意图的值，如果没有匹配的意图则返回 -1
     """
+    max_score = 0
+    best_match = -1
+    
     # 使用百度AI的短文本相似度API来分析输入字符串的意图
     for intent, value in intents.items():
         similarity_result = client.simnet(input_string, intent)
         
         # 检查相似度结果是否包含'score'字段
         if 'score' in similarity_result:
-            if similarity_result['score'] > 0.8:  # 可以调整相似度阈值
-                return value
+            score = similarity_result['score']
+            if score > max_score:
+                max_score = score
+                best_match = value
         else:
             print(f"Error in API response: {similarity_result}")
+    
+    # 设置相似度阈值
+    threshold = 0.5
+    if max_score >= threshold:
+        return best_match
+    else:
+        return -1
 
-    # 如果没有匹配的意图，返回 -1
-    return -1
-
-# 使用方法
-# input_string1 = "请用GPT功能借书"
-# output1 = process_string(input_string1)
-# print(f"输入: '{input_string1}' 的输出结果: {output1}")
-
+# 使用
+# input_string = "我想借呐喊"
+# output = process_string(input_string)
+# print(f"输入: '{input_string}' 的输出结果: {output}")
