@@ -3,6 +3,11 @@ import wave
 import numpy as np
 from aip import AipSpeech
 import speechprocessing
+import sys
+import io
+
+# 设置标准输出编码为utf-8
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 # 百度APPID AK SK
 APP_ID = '103707598'
