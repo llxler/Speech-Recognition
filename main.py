@@ -22,8 +22,8 @@ CHANNELS = 1
 RATE = 16000
 CHUNK = 1024
 WAVE_OUTPUT_FILENAME = 'D:/UseForRuanjianbei/Speech-Recognition/audio.wav'
-SILENCE_THRESHOLD = 35000  # 静音阈值
-SILENCE_DURATION = 1.5  # 静音持续时间秒数
+SILENCE_THRESHOLD = 45000  # 静音阈值
+SILENCE_DURATION = 1  # 静音持续时间秒数
 
 class AutoRecorder:
     def __init__(self):
