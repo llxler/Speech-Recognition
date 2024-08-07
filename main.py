@@ -1,9 +1,7 @@
 import pyaudio
 import wave
 import numpy as np
-import time
 from aip import AipSpeech
-
 import speechprocessing
 
 # 百度APPID AK SK
@@ -19,7 +17,7 @@ CHANNELS = 1
 RATE = 16000
 CHUNK = 1024
 WAVE_OUTPUT_FILENAME = 'D:/UseForRuanjianbei/Speech-Recognition/audio.wav'
-SILENCE_THRESHOLD = 20000  # 静音阈值
+SILENCE_THRESHOLD = 35000  # 静音阈值
 SILENCE_DURATION = 1.5  # 静音持续时间秒数
 
 class AutoRecorder:
@@ -31,7 +29,7 @@ class AutoRecorder:
 
     def detect_voice(self):
         self.stream = self.audio.open(format=FORMAT, channels=CHANNELS,
-                                rate=RATE, input=True, frames_per_buffer=CHUNK)
+                                    rate=RATE, input=True, frames_per_buffer=CHUNK)
         silence_count = 0
         self.recording = False
 
@@ -43,13 +41,13 @@ class AutoRecorder:
 
             if volume > SILENCE_THRESHOLD:
                 if not self.recording:
-                    print("检测到声音，开始录音...")
+                    # print("检测到声音，开始录音...")
                     self.start_recording()
                 silence_count = 0
             elif self.recording:
                 silence_count += 1
                 if silence_count > SILENCE_DURATION * RATE / CHUNK:
-                    print("检测到静音，停止录音...")
+                    # print("检测到静音，停止录音...")
                     self.stop_recording()
                     break
 
@@ -75,27 +73,24 @@ class AutoRecorder:
             audio_data = f.read()
         result = client.asr(audio_data, 'wav', 16000, {'dev_pid': 1537})
         if result['err_no'] == 0:
-            str = result['result'][0]
-            # 调用字符处理函数处理字符串
-            print("识别结果: " + str)
-            output = speechprocessing.process_string(str)
+            recognized_str = result['result'][0]
+            # 调用词义匹配函数处理字符串
+            print("识别结果: " + recognized_str)
+            output = speechprocessing.process_string(recognized_str)
             print(f"识别码 {output}")
         else:
             print(f"语音识别失败，错误码：{result['err_no']}, 错误信息：{result['err_msg']}")
 
     def terminate(self):
-        self.stream.stop_stream()
-        self.stream.close()
+        if self.stream is not None:
+            self.stream.stop_stream()
+            self.stream.close()
         self.audio.terminate()
 
 def main():
-    while True:
-        recorder = AutoRecorder()
-        try:
-            recorder.detect_voice()
-        finally:
-            recorder.terminate()
-        time.sleep(5)
+    recorder = AutoRecorder()
+    recorder.detect_voice()
+    recorder.terminate()
 
 if __name__ == '__main__':
     main()
