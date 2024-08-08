@@ -2,9 +2,10 @@ import pyaudio
 import wave
 import numpy as np
 from aip import AipSpeech
-import speechprocessing
 import sys
 import io
+import speechprocessing
+
 
 # 设置标准输出编码为utf-8
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
@@ -22,8 +23,9 @@ CHANNELS = 1
 RATE = 16000
 CHUNK = 1024
 WAVE_OUTPUT_FILENAME = 'D:/UseForRuanjianbei/Speech-Recognition/audio.wav'
-SILENCE_THRESHOLD = 45000  # 静音阈值
+SILENCE_THRESHOLD = 50000  # 静音阈值
 SILENCE_DURATION = 1  # 静音持续时间秒数
+API = True
 
 class AutoRecorder:
     def __init__(self):
@@ -81,7 +83,10 @@ class AutoRecorder:
             recognized_str = result['result'][0]
             # 调用词义匹配函数处理字符串
             print("识别结果: " + recognized_str)
-            output = speechprocessing.process_string(recognized_str)
+            if API:
+                output = speechprocessing.process_string(recognized_str)
+            # else: 
+            #     output = Word2Vec.process_string(recognized_str)
             print(f"识别码 {output}")
         else:
             print(f"语音识别失败，错误码：{result['err_no']}, 错误信息：{result['err_msg']}")
