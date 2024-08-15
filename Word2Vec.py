@@ -24,6 +24,7 @@ intents = {
     '我要用智慧阅读功能': 7, # 打开智慧阅读功能
     # GPT 适配功能
     '了解图书馆的概况': 0, # 呼出图书馆咨询助手，并向读者介绍图书馆的基本情况
+    '公交情况': 0,
     '根据评论来推荐书籍': 8, # 呼出gpt来推荐图书
     '帮我预定座位，需要某号自习室的座位': 9, # 呼出gpt来订座位
     # 交付给kimi的功能
@@ -57,7 +58,7 @@ def process_string(input_string):
             best_match = value
 
     # 设置相似度阈值
-    threshold = 0.5
+    threshold = 0.4
     if max_score >= threshold:
         return best_match
     else:
